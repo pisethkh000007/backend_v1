@@ -95,7 +95,6 @@
 						"name": "sortBy",
 						"required": false,
 						"schema": {
-							"default": "fullName",
 							"type": "string",
 							"enum": [
 								"age",
@@ -108,7 +107,6 @@
 						"name": "sortOrder",
 						"required": false,
 						"schema": {
-							"default": "asc",
 							"type": "string",
 							"enum": [
 								"asc",

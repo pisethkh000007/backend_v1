@@ -43,8 +43,8 @@ export function RegisterRoutes(app: Router) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     page: {"default":"1","in":"query","name":"page","dataType":"string"},
                     limit: {"default":"10","in":"query","name":"limit","dataType":"string"},
-                    sortBy: {"default":"fullName","in":"query","name":"sortBy","dataType":"union","subSchemas":[{"dataType":"enum","enums":["age"]},{"dataType":"enum","enums":["fullName"]}]},
-                    sortOrder: {"default":"asc","in":"query","name":"sortOrder","dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
+                    sortBy: {"in":"query","name":"sortBy","dataType":"union","subSchemas":[{"dataType":"enum","enums":["age"]},{"dataType":"enum","enums":["fullName"]}]},
+                    sortOrder: {"in":"query","name":"sortOrder","dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
                     gender: {"in":"query","name":"gender","dataType":"union","subSchemas":[{"dataType":"enum","enums":["male"]},{"dataType":"enum","enums":["female"]}]},
                     minAge: {"in":"query","name":"minAge","dataType":"string"},
                     maxAge: {"in":"query","name":"maxAge","dataType":"string"},
