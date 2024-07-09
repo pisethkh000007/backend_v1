@@ -1,1 +1,6 @@
+# Ignore env
 .env.development
+
+# Other entries...
+node_modules/
+build/
