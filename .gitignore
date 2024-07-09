@@ -1,1 +1,21 @@
-./configs
+# Local development
+local
+development
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.development
+.env.production
+.env.testing
+
+yarn.lock
+
+node_modules
+
+build
