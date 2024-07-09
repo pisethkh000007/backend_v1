@@ -1,6 +1,11 @@
-# Ignore env
+# Ignore environment configuration files
 .env.development
 
-# Other entries...
-node_modules/
+# Ignore Yarn lock file
+yarn.lock
+
+# Ignore build directory
 build/
+
+# Ignore node_modules directory
+node_modules/
