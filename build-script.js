@@ -30,62 +30,53 @@ const path = require("path");
 const fs = require("fs");
 const { execSync } = require("child_process");
 
-// Generate tsoa routes and spec
-try {
-  execSync("yarn tsoa:gen", { stdio: "inherit" });
-} catch (error) {
-  console.error("Error generating tsoa routes and spec:", error);
-  process.exit(1);
-}
+// Load environment variables from .env.production file
+const envPath = path.resolve(__dirname, `./src/configs/.env.production`);
+const env = fs.readFileSync(envPath, "utf8");
+const envVars = env
+  .split("\n")
+  .map((line) => line.trim())
+  .filter((line) => line && !line.startsWith("#"))
+  .reduce((acc, line) => {
+    const [key, value] = line.split("=");
+    acc[key] = value;
+    return acc;
+  }, {});
 
-// Build with esbuild
+// Copy environment variables to the build environment
+console.log("Copied environment variables:");
+console.log(envVars);
+
 esbuild
   .build({
     entryPoints: ["src/server.ts"],
     bundle: true,
     platform: "node",
-    target: "node20",
+    target: "node20", // Target depends on your environment
     outdir: "build",
-    external: ["express"],
+    external: ["express"], // Specify Node.js packages here
     loader: {
       ".ts": "ts",
     },
     resolveExtensions: [".ts", ".js"],
     define: {
       "process.env.NODE_ENV": '"production"',
+      ...Object.fromEntries(
+        Object.entries(envVars).map(([key, value]) => [
+          `process.env.${key}`,
+          `"${value}"`,
+        ])
+      ),
     },
   })
   .then(() => {
-    // Copy the generated swagger.json to the build/docs directory
-    const buildDocsDir = path.join(__dirname, "build", "docs");
-    if (!fs.existsSync(buildDocsDir)) {
-      fs.mkdirSync(buildDocsDir, { recursive: true });
-    }
-    fs.copyFileSync(
-      path.join(__dirname, "src", "docs", "swagger.json"),
-      path.join(buildDocsDir, "swagger.json")
-    );
-
-    // Copy the .env.production file to the build directory
-    const envSrcPath = path.join(
-      __dirname,
-      "src",
-      "configs",
-      ".env.production"
-    );
-    const envDestPath = path.join(__dirname, "build", ".env.production");
-
-    if (fs.existsSync(envSrcPath)) {
-      fs.copyFileSync(envSrcPath, envDestPath);
-
-      // Log the copied environment variables
-      const copiedEnv = fs.readFileSync(envDestPath, "utf-8");
-      console.log("Copied environment variables:\n", copiedEnv);
-    } else {
-      console.error(".env.production file does not exist at", envSrcPath);
-    }
-
     console.log("Build succeeded.");
+    try {
+      execSync("tsoa spec && tsoa routes", { stdio: "inherit" });
+    } catch (error) {
+      console.error("Error generating tsoa routes and spec:", error);
+      process.exit(1);
+    }
   })
   .catch((error) => {
     console.error("Build failed:", error);
