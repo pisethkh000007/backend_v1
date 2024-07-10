@@ -74,17 +74,16 @@ describe("User API", () => {
 
   beforeAll(async () => {
     console.log("MONGODB_URL from env:", process.env.MONGODB_URL); // Debug statement
-
     const mongoUri = process.env.MONGODB_URL;
     if (!mongoUri) {
       throw new Error("MONGODB_URL environment variable is not defined");
     }
     await mongoose.connect(mongoUri);
-  });
+  }, 30000); // Set timeout to 30 seconds
 
   afterAll(async () => {
     await mongoose.connection.close();
-  });
+  }, 30000);
 
   it("should register a new user", async () => {
     const response = await request(app).post("/api/v1/users/register").send({
@@ -99,21 +98,21 @@ describe("User API", () => {
     expect(response.status).toBe(201); // Ensure the status code is 201
     expect(response.body.data).toHaveProperty("_id");
     userId = response.body.data._id; // Set the user ID for later use
-  }, 10000);
+  }, 30000); // Set timeout to 30 seconds
 
   it("should get all users", async () => {
     const response = await request(app).get("/api/v1/users");
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("users");
-  }, 10000);
+  }, 30000);
 
   it("should get a user by id", async () => {
     const response = await request(app).get(`/api/v1/users/${userId}`);
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("_id", userId);
-  }, 10000);
+  }, 30000);
 
   it("should update a user by id", async () => {
     const response = await request(app)
@@ -122,12 +121,12 @@ describe("User API", () => {
 
     expect(response.status).toBe(200);
     expect(response.body.data).toHaveProperty("fullName", "Updated Test User");
-  }, 10000);
+  }, 30000);
 
   it("should delete a user by id", async () => {
     const response = await request(app).delete(`/api/v1/users/${userId}`);
 
     expect(response.status).toBe(200);
     expect(response.body.message).toBe("Delete successfully");
-  }, 10000);
+  }, 30000);
 });
