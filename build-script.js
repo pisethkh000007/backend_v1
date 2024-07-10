@@ -101,6 +101,7 @@ const envVars = env
     acc[key] = value;
     return acc;
   }, {});
+  ///
 
 // Copy environment variables to the build environment
 console.log("Copied environment variables:");
