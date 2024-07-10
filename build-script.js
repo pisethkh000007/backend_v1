@@ -28,15 +28,24 @@
 const esbuild = require("esbuild");
 const path = require("path");
 const fs = require("fs");
+const { execSync } = require("child_process");
 
-// Load environment variables
-const envPath = path.resolve(__dirname, "src/configs/.env.development");
-require("dotenv").config({ path: envPath });
+// Load environment variables from .env.production file
+const envPath = path.resolve(__dirname, `./src/configs/.env.production`);
+const env = fs.readFileSync(envPath, "utf8");
+const envVars = env
+  .split("\n")
+  .map((line) => line.trim())
+  .filter((line) => line && !line.startsWith("#"))
+  .reduce((acc, line) => {
+    const [key, value] = line.split("=");
+    acc[key] = value;
+    return acc;
+  }, {});
 
-console.log(
-  "Copied environment variables:\n",
-  fs.readFileSync(envPath, "utf8")
-);
+// Copy environment variables to the build environment
+console.log("Copied environment variables:");
+console.log(envVars);
 
 esbuild
   .build({
@@ -52,9 +61,22 @@ esbuild
     resolveExtensions: [".ts", ".js"],
     define: {
       "process.env.NODE_ENV": '"production"',
-      "process.env.PORT": `"${process.env.PORT}"`,
-      "process.env.MONGODB_URL": `"${process.env.MONGODB_URL}"`,
+      ...Object.fromEntries(
+        Object.entries(envVars).map(([key, value]) => [
+          `process.env.${key}`,
+          `"${value}"`,
+        ])
+      ),
     },
+  })
+  .then(() => {
+    console.log("Build succeeded.");
+    try {
+      execSync("tsoa spec && tsoa routes", { stdio: "inherit" });
+    } catch (error) {
+      console.error("Error generating tsoa routes and spec:", error);
+      process.exit(1);
+    }
   })
   .catch((error) => {
     console.error("Build failed:", error);
