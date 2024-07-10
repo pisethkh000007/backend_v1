@@ -58,14 +58,14 @@ jobs:
 
       - name: Run tests
         env:
-          NODE_ENV: development
+          NODE_ENV: test
           PORT: 3000
           MONGODB_URL: mongodb+srv://virakson444:NfT5ug3pATwLxQxQ@bootcamp-project.lwadf47.mongodb.net/auths
         run: yarn test
 
       - name: Start the application
         env:
-          NODE_ENV: development
+          NODE_ENV: production
           PORT: 3000
           MONGODB_URL: mongodb+srv://virakson444:NfT5ug3pATwLxQxQ@bootcamp-project.lwadf47.mongodb.net/auths
         run: yarn start
