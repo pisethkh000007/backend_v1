@@ -1,5 +1,5 @@
 # Ignore environment configuration files
-.env.development
+src/configs/.env.development
 
 # Ignore Yarn lock file
 yarn.lock
