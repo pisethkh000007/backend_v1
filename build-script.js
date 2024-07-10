@@ -66,19 +66,24 @@ esbuild
       path.join(buildDocsDir, "swagger.json")
     );
 
-    // Copy the .env.development file to the build directory
+    // Copy the .env.production file to the build directory
     const envSrcPath = path.join(
       __dirname,
       "src",
       "configs",
-      ".env.development"
+      ".env.production"
     );
-    const envDestPath = path.join(__dirname, "build", ".env.development");
-    fs.copyFileSync(envSrcPath, envDestPath);
+    const envDestPath = path.join(__dirname, "build", ".env.production");
 
-    // Log the copied environment variables
-    const copiedEnv = fs.readFileSync(envDestPath, "utf-8");
-    console.log("Copied environment variables:\n", copiedEnv);
+    if (fs.existsSync(envSrcPath)) {
+      fs.copyFileSync(envSrcPath, envDestPath);
+
+      // Log the copied environment variables
+      const copiedEnv = fs.readFileSync(envDestPath, "utf-8");
+      console.log("Copied environment variables:\n", copiedEnv);
+    } else {
+      console.error(".env.production file does not exist at", envSrcPath);
+    }
 
     console.log("Build succeeded.");
   })
