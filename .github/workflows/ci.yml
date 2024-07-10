@@ -57,9 +57,15 @@ jobs:
         run: yarn build
 
       - name: Run tests
-        run: |
-          echo "MONGODB_URL=mongodb+srv://virakson444:NfT5ug3pATwLxQxQ@bootcamp-project.lwadf47.mongodb.net/auths" >> .env
-          yarn test
+        env:
+          NODE_ENV: development
+          PORT: 3000
+          MONGODB_URL: mongodb+srv://virakson444:NfT5ug3pATwLxQxQ@bootcamp-project.lwadf47.mongodb.net/auths
+        run: yarn test
 
       - name: Start the application
+        env:
+          NODE_ENV: development
+          PORT: 3000
+          MONGODB_URL: mongodb+srv://virakson444:NfT5ug3pATwLxQxQ@bootcamp-project.lwadf47.mongodb.net/auths
         run: yarn start
