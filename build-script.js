@@ -50,6 +50,8 @@
 
 const esbuild = require("esbuild");
 const { execSync } = require("child_process");
+const fs = require("fs");
+const path = require("path");
 
 // Collect environment variables from the current environment
 const envVars = {
@@ -86,8 +88,25 @@ esbuild
   .then(() => {
     console.log("Build succeeded.");
     try {
-      execSync("tsoa spec && tsoa routes", { stdio: "inherit" });
+      execSync("npx tsoa spec && npx tsoa routes", { stdio: "inherit" });
       console.log("Swagger spec and routes generated successfully.");
+
+      // Copy the generated swagger.json and routes to the build directory using Node.js
+      const copyFiles = (srcDir, destDir) => {
+        if (!fs.existsSync(destDir)) {
+          fs.mkdirSync(destDir, { recursive: true });
+        }
+
+        fs.readdirSync(srcDir).forEach((file) => {
+          const srcFile = path.join(srcDir, file);
+          const destFile = path.join(destDir, file);
+          fs.copyFileSync(srcFile, destFile);
+        });
+      };
+
+      copyFiles("src/docs", "build/docs");
+      copyFiles("src/routes/v1", "build/routes/v1");
+      console.log("Swagger spec and routes copied to build directory.");
     } catch (error) {
       console.error("Error generating tsoa routes and spec:", error);
       process.exit(1);
@@ -97,10 +116,3 @@ esbuild
     console.error("Build failed:", error);
     process.exit(1);
   });
-try {
-  execSync("npx tsoa spec && npx tsoa routes", { stdio: "inherit" });
-  console.log("Swagger spec and routes generated successfully.");
-} catch (error) {
-  console.error("Error generating tsoa routes and spec:", error);
-  process.exit(1);
-}
