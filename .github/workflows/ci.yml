@@ -45,8 +45,8 @@ jobs:
           MONGODB_URL: ${{ secrets.MONGODB_URL }}
           PORT: ${{ secrets.PORT }}
 
-      - name: Start the application
-        run: yarn start
-        env:
-          MONGODB_URL: ${{ secrets.MONGODB_URL }}
-          PORT: ${{ secrets.PORT }}
+     # - name: Start the application
+       # run: yarn start
+       # env:
+         # MONGODB_URL: ${{ secrets.MONGODB_URL }}
+         # PORT: ${{ secrets.PORT }}
