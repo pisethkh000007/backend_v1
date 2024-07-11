@@ -24,6 +24,14 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Set up environment variables
+        run: |
+          echo "MONGODB_URL=${{ secrets.MONGODB_URL }}" >> .env.production
+          echo "PORT=${{ secrets.PORT }}" >> .env.production
+        env:
+          MONGODB_URL: ${{ secrets.MONGODB_URL }}
+          PORT: ${{ secrets.PORT }}
+
       - name: Build the project
         run: yarn build
         env:
