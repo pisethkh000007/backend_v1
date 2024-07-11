@@ -33,6 +33,50 @@
 #       - name: Start the application
 #         run: yarn start
 
+# name: CI
+
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     branches:
+#       - main
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v2
+#         with:
+#           node-version: "20.x"
+
+#       - name: Install dependencies
+#         run: yarn install
+
+#       - name: Build the project
+#         run: yarn build
+#         env:
+#           MONGODB_URL: ${{ secrets.MONGODB_URL }}
+#           PORT: ${{ secrets.PORT }}
+
+#       - name: Run tests
+#         run: yarn test
+#         env:
+#           MONGODB_URL: ${{ secrets.MONGODB_URL }}
+#           PORT: ${{ secrets.PORT }}
+
+#       - name: Start the application
+#         run: yarn start
+#         env:
+#           MONGODB_URL: ${{ secrets.MONGODB_URL }}
+#           PORT: ${{ secrets.PORT }}
+
 name: CI
 
 on:
@@ -64,15 +108,18 @@ jobs:
         env:
           MONGODB_URL: ${{ secrets.MONGODB_URL }}
           PORT: ${{ secrets.PORT }}
+          NODE_ENV: production
 
       - name: Run tests
         run: yarn test
         env:
           MONGODB_URL: ${{ secrets.MONGODB_URL }}
           PORT: ${{ secrets.PORT }}
+          NODE_ENV: test
 
       - name: Start the application
         run: yarn start
         env:
           MONGODB_URL: ${{ secrets.MONGODB_URL }}
           PORT: ${{ secrets.PORT }}
+          NODE_ENV: production
