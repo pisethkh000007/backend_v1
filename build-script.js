@@ -53,52 +53,24 @@ const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 
-// Function to load environment variables from a file
-const loadEnvVariables = (filePath) => {
-  if (!fs.existsSync(filePath)) {
-    return null;
-  }
-
-  const env = fs.readFileSync(filePath, "utf8");
-  return env
-    .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line && !line.startsWith("#"))
-    .reduce((acc, line) => {
-      const [key, value] = line.split("=");
-      acc[key] = value;
-      return acc;
-    }, {});
-};
-
-// Try to load .env.production, fallback to .env.development if it does not exist
-const envPath = path.resolve(__dirname, `./src/configs/.env.production`);
-const fallbackEnvPath = path.resolve(
-  __dirname,
-  `./src/configs/.env.development`
-);
-let envVars = loadEnvVariables(envPath);
-
-if (!envVars) {
-  console.warn(`.env.production not found, falling back to .env.development`);
-  envVars = loadEnvVariables(fallbackEnvPath);
-
-  if (!envVars) {
-    console.error(
-      `No environment file found. Please create .env.production or .env.development in the configs directory.`
-    );
-    process.exit(1);
-  }
+// Determine the environment and set the appropriate .env file
+const env = process.env.NODE_ENV || "production";
+const envPath = path.resolve(__dirname, `./src/configs/.env.${env}`);
+if (!fs.existsSync(envPath)) {
+  console.error(
+    `.env.${env} not found. Please create the .env.${env} file in the configs directory.`
+  );
+  process.exit(1);
 }
 
-// Ensure required environment variables are defined
-const requiredEnvVars = ["MONGODB_URL", "PORT"];
-for (const varName of requiredEnvVars) {
-  if (!envVars[varName]) {
-    console.error(`${varName} is a required environment variable.`);
-    process.exit(1);
+const envVars = {};
+const envContent = fs.readFileSync(envPath, "utf8");
+envContent.split("\n").forEach((line) => {
+  const [key, value] = line.split("=");
+  if (key && value) {
+    envVars[key.trim()] = value.trim();
   }
-}
+});
 
 // Copy environment variables to the build environment
 console.log("Copied environment variables:");
@@ -117,7 +89,6 @@ esbuild
     },
     resolveExtensions: [".ts", ".js"],
     define: {
-      "process.env.NODE_ENV": '"production"',
       ...Object.fromEntries(
         Object.entries(envVars).map(([key, value]) => [
           `process.env.${key}`,
