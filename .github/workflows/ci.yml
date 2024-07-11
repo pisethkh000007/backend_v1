@@ -26,6 +26,7 @@ jobs:
 
       - name: Set up environment variables
         run: |
+          mkdir -p src/configs
           echo "MONGODB_URL=${{ secrets.MONGODB_URL }}" >> src/configs/.env.production
           echo "PORT=${{ secrets.PORT }}" >> src/configs/.env.production
         env:
