@@ -8,7 +8,7 @@
     "test": "jest",
     "dev": "yarn tsoa:gen && nodemon src/server.ts",
     "build": "node build-script.js",
-    "start": "node -r dotenv/config ./build/server.js dotenv_config_path=./src/configs/.env.production" 
+    "start": "node -r dotenv/config ./build/server.js dotenv_config_path=./src/configs/.env.production"
   },
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -23,6 +23,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "esbuild": "^0.21.5",
+    "esbuild-plugin-copy": "^2.1.1",
     "express": "^4.19.2",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
