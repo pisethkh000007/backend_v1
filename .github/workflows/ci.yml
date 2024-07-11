@@ -26,8 +26,8 @@ jobs:
 
       - name: Set up environment variables
         run: |
-          echo "MONGODB_URL=${{ secrets.MONGODB_URL }}" >> ../src/configs/.env.production
-          echo "PORT=${{ secrets.PORT }}" >> ../src/configs/.env.production
+          echo "MONGODB_URL=${{ secrets.MONGODB_URL }}" >> ./configs/.env.production
+          echo "PORT=${{ secrets.PORT }}" >> ./configs/.env.production
         env:
           MONGODB_URL: ${{ secrets.MONGODB_URL }}
           PORT: ${{ secrets.PORT }}
