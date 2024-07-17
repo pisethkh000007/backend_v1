@@ -27,7 +27,7 @@ jobs:
       - name: Set up environment variables
         run: |
           mkdir -p src/configs
-          echo "MONGODB_URL=${{ secrets.MONGODB_URL }}" >> src/configs/.env.production
+          echo "MONGODB_URL=${{ secrets.MONGODB_URL }}" > src/configs/.env.production
           echo "PORT=${{ secrets.PORT }}" >> src/configs/.env.production
         env:
           MONGODB_URL: ${{ secrets.MONGODB_URL }}
@@ -45,8 +45,8 @@ jobs:
           MONGODB_URL: ${{ secrets.MONGODB_URL }}
           PORT: ${{ secrets.PORT }}
 
-     # - name: Start the application
-       # run: yarn start
-       # env:
-         # MONGODB_URL: ${{ secrets.MONGODB_URL }}
-         # PORT: ${{ secrets.PORT }}
+      - name: Start the application
+        run: yarn start
+        env:
+          MONGODB_URL: ${{ secrets.MONGODB_URL }}
+          PORT: ${{ secrets.PORT }}

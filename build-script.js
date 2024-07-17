@@ -48,6 +48,8 @@
 //     process.exit(1);
 //   });
 
+//* Success but no Ui api
+
 // const esbuild = require("esbuild");
 // const { execSync } = require("child_process");
 // const fs = require("fs");
@@ -129,14 +131,12 @@
 //     process.exit(1);
 //   });
 
+//* Successs
+
 const esbuild = require("esbuild");
 const path = require("path");
 const fs = require("fs-extra");
 const copy = require("esbuild-plugin-copy").default;
-
-// Issue
-// 1: Esbuild could not load swagger.json
-// 2: SwaggerUIBundle is not defined in production
 
 esbuild
   .build({
@@ -150,7 +150,6 @@ esbuild
       ".ts": "ts",
     },
     plugins: [
-      // (2) Solve: https://stackoverflow.com/questions/62136515/swagger-ui-express-plugin-issue-with-webpack-bundling-in-production-mode/63048697#63048697
       copy({
         assets: {
           from: [
@@ -171,7 +170,6 @@ esbuild
     },
   })
   .then(() => {
-    // (1) Solve: Copy swagger.json after successful build
     fs.copySync(
       path.resolve(__dirname, "src/docs/swagger.json"),
       path.resolve(__dirname, "build/docs/swagger.json")
@@ -180,7 +178,7 @@ esbuild
       path.resolve(__dirname, "src/configs/.env.production"),
       path.resolve(__dirname, "build/configs/.env.production")
     );
-    console.log("Swagger JSON copied successfully!");
+    console.log("Swagger JSON and .env.production copied successfully!");
   })
   .catch((error) => {
     console.error("Build failed:", error);
