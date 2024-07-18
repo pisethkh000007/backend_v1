@@ -19,7 +19,12 @@ jobs:
           node-version: "20.x"
 
       - name: Set environment variables
-        run: echo "ENV_VAR=value" >> $GITHUB_ENV
+        env:
+          MONGODB_URL: ${{ secrets.MONGODB_URL }}
+          PORT: ${{ secrets.PORT }}
+        run: |
+          echo "MONGODB_URL=${{ secrets.MONGODB_URL }}" >> $GITHUB_ENV
+          echo "PORT=${{ secrets.PORT }}" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: yarn install
