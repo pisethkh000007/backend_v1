@@ -51,7 +51,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd your-repo
+            cd /path/to/your/project-directory  # Replace this with the actual path
             git pull origin main
             yarn install
             yarn build
