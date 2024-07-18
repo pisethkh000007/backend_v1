@@ -61,15 +61,15 @@ jobs:
       - name: Debug SSH key setup
         run: |
           echo "Debugging SSH key setup"
-          ssh-add -l
+          ssh-add -l || echo "SSH key not found"
           echo "Known hosts:"
-          cat ~/.ssh/known_hosts
+          cat ~/.ssh/known_hosts || echo "No known hosts found"
           echo "SSH agent status:"
-          ps aux | grep ssh-agent
+          ps aux | grep ssh-agent || echo "SSH agent not running"
           exit 1  # Force exit to see the debug output
 
       - name: Deploy to EC2
-        if: always()  # This will run even if the previous step fails
+        if: always() # This will run even if the previous step fails
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
