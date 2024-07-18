@@ -16,7 +16,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "20.x" # Updated to use Node.js version 20.x
+          node-version: "20.x"
+
+      - name: Set environment variables
+        run: echo "ENV_VAR=value" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: yarn install
