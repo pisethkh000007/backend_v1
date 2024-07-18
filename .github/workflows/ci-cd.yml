@@ -47,6 +47,11 @@ jobs:
             exit 1
           fi
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+          ssh-add -l
+          if [ $? -ne 0 ]; then
+            echo "Error listing SSH keys"
+            exit 1
+          fi
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
