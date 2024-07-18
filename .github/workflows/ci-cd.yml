@@ -51,12 +51,18 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            echo "Start deployment at $(date)"
             cd /home/ubuntu/Project-backend-NodeJS  # Updated path
+            echo "Pulling latest code"
             git pull origin main
+            echo "Installing dependencies"
             yarn install
+            echo "Building project"
             yarn build
+            echo "Restarting PM2 processes"
             if pm2 describe all | grep -q 'status\s*online'; then
               pm2 restart all
             else
               pm2 start src/server.ts --name "my-app" --interpreter ./node_modules/.bin/ts-node
             fi
+            echo "Deployment completed at $(date)"
