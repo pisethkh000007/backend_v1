@@ -53,6 +53,15 @@ jobs:
             exit 1
           fi
 
+      - name: Debug SSH key setup
+        run: |
+          echo "Debugging SSH key setup"
+          ssh-add -l
+          echo "Known hosts:"
+          cat ~/.ssh/known_hosts
+          echo "SSH agent status:"
+          ps aux | grep ssh-agent
+
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
