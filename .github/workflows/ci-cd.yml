@@ -36,9 +36,11 @@ jobs:
         run: yarn build
 
       - name: Add SSH key and start SSH agent
+        env:
+          EC2_SSH_KEY_BASE64: ${{ secrets.EC2_SSH_KEY_BASE64 }}
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          echo "$EC2_SSH_KEY_BASE64" | base64 --decode > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           eval $(ssh-agent -s)
           ssh-add ~/.ssh/id_rsa
@@ -49,7 +51,7 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
+          key: ${{ secrets.EC2_SSH_KEY_BASE64 }} # Use the base64 key here
           script: |
             cd your-repo
             git pull origin main
