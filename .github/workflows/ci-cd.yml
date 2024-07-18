@@ -47,11 +47,16 @@ jobs:
             exit 1
           fi
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+          if [ $? -ne 0 ]; then
+            echo "Error adding known host"
+            exit 1
+          fi
           ssh-add -l
           if [ $? -ne 0 ]; then
             echo "Error listing SSH keys"
             exit 1
           fi
+          echo "SSH setup completed successfully"
 
       - name: Debug SSH key setup
         run: |
@@ -61,8 +66,10 @@ jobs:
           cat ~/.ssh/known_hosts
           echo "SSH agent status:"
           ps aux | grep ssh-agent
+          exit 1  # Force exit to see the debug output
 
       - name: Deploy to EC2
+        if: always()  # This will run even if the previous step fails
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
