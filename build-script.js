@@ -133,6 +133,60 @@
 
 //* Successs
 
+// const esbuild = require("esbuild");
+// const path = require("path");
+// const fs = require("fs-extra");
+// const copy = require("esbuild-plugin-copy").default;
+
+// esbuild
+//   .build({
+//     entryPoints: ["src/server.ts"],
+//     bundle: true,
+//     platform: "node",
+//     target: "node20", // Target depends on your environment
+//     outdir: "build",
+//     external: ["express"], // Specify Node.js packages here
+//     loader: {
+//       ".ts": "ts",
+//     },
+//     plugins: [
+//       copy({
+//         assets: {
+//           from: [
+//             "node_modules/swagger-ui-dist/*.css",
+//             "node_modules/swagger-ui-dist/*.js",
+//             "node_modules/swagger-ui-dist/*.png",
+//           ],
+//           to: ["./"],
+//         },
+//       }),
+//     ],
+//     resolveExtensions: [".ts", ".js"],
+//     define: {
+//       "process.env.NODE_ENV": '"production"',
+//     },
+//     alias: {
+//       "@": path.resolve(__dirname, "."),
+//     },
+//   })
+//   .then(() => {
+//     fs.copySync(
+//       path.resolve(__dirname, "src/docs/swagger.json"),
+//       path.resolve(__dirname, "build/docs/swagger.json")
+//     );
+//     fs.copySync(
+//       path.resolve(__dirname, "src/configs/.env.production"),
+//       path.resolve(__dirname, "build/configs/.env.production")
+//     );
+//     console.log("Swagger JSON and .env.production copied successfully!");
+//   })
+//   .catch((error) => {
+//     console.error("Build failed:", error);
+//     process.exit(1);
+//   });
+
+//* Success v2
+
 const esbuild = require("esbuild");
 const path = require("path");
 const fs = require("fs-extra");
@@ -174,11 +228,8 @@ esbuild
       path.resolve(__dirname, "src/docs/swagger.json"),
       path.resolve(__dirname, "build/docs/swagger.json")
     );
-    fs.copySync(
-      path.resolve(__dirname, "src/configs/.env.production"),
-      path.resolve(__dirname, "build/configs/.env.production")
-    );
-    console.log("Swagger JSON and .env.production copied successfully!");
+    // Removed copying of .env.production
+    console.log("Swagger JSON copied successfully!");
   })
   .catch((error) => {
     console.error("Build failed:", error);
