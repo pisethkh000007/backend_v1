@@ -35,13 +35,14 @@ jobs:
       - name: Build project
         run: yarn build
 
-      - name: Debug SSH key setup
+      - name: Add SSH key and start SSH agent
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ls -la ~/.ssh
-          cat ~/.ssh/id_rsa
+          eval $(ssh-agent -s)
+          ssh-add ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
