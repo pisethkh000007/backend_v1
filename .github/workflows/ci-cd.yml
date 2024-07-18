@@ -58,5 +58,5 @@ jobs:
             if pm2 describe all | grep -q 'status\s*online'; then
               pm2 restart all
             else
-              pm2 start src/server.ts --name "my-app"
+              pm2 start src/server.ts --name "my-app" --interpreter ./node_modules/.bin/ts-node
             fi
