@@ -55,4 +55,8 @@ jobs:
             git pull origin main
             yarn install
             yarn build
-            pm2 restart all
+            if pm2 describe all | grep -q 'status\s*online'; then
+              pm2 restart all
+            else
+              pm2 start src/server.ts --name "my-app"
+            fi
