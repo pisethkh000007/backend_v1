@@ -88,6 +88,6 @@ jobs:
             if pm2 describe all | grep -q 'status\s*online'; then
               pm2 restart all
             else
-              pm2 start build/server.js --name "my-app"  # Corrected entry point
+              pm2 start build/server.js --name "my-app"
             fi
             echo "Deployment completed at $(date)"
