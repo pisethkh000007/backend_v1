@@ -1,3 +1,86 @@
+# name: CI/CD Pipeline
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v2
+#         with:
+#           node-version: "20.x"
+
+#       - name: Set environment variables
+#         env:
+#           MONGODB_URL: ${{ secrets.MONGODB_URL }}
+#           PORT: ${{ secrets.PORT }}
+#         run: |
+#           echo "MONGODB_URL=${{ secrets.MONGODB_URL }}" >> $GITHUB_ENV
+#           echo "PORT=${{ secrets.PORT }}" >> $GITHUB_ENV
+
+#       - name: Install dependencies
+#         run: yarn install
+
+#       - name: Run tests
+#         run: yarn test
+
+#       - name: Build project
+#         run: yarn build
+
+#       - name: Add SSH key and start SSH agent
+#         run: |
+#           mkdir -p ~/.ssh
+#           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+#           chmod 600 ~/.ssh/id_rsa
+#           eval $(ssh-agent -s)
+#           ssh-add ~/.ssh/id_rsa
+#           if [ $? -ne 0 ]; then
+#             echo "Error adding SSH key"
+#             exit 1
+#           fi
+#           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+#           if [ $? -ne 0 ]; then
+#             echo "Error adding known host"
+#             exit 1
+#           fi
+#           ssh-add -l
+#           if [ $? -ne 0 ]; then
+#             echo "Error listing SSH keys"
+#             exit 1
+#           fi
+#           echo "SSH setup completed successfully"
+
+#       - name: Deploy to EC2
+#         uses: appleboy/ssh-action@master
+#         with:
+#           host: ${{ secrets.EC2_HOST }}
+#           username: ubuntu
+#           key: ${{ secrets.EC2_SSH_KEY }}
+#           script: |
+#             echo "Start deployment at $(date)"
+#             cd /home/ubuntu/Project-backend-NodeJS
+#             echo "Pulling latest code"
+#             git pull origin main
+#             echo "Installing dependencies"
+#             yarn install
+#             echo "Building project"
+#             yarn build
+#             echo "Restarting PM2 processes"
+#             if pm2 describe all | grep -q 'status\s*online'; then
+#               pm2 restart all
+#             else
+#               pm2 start build/server.js --name "my-app" -f
+#             fi
+#             echo "Deployment completed at $(date)"
+
 name: CI/CD Pipeline
 
 on:
@@ -73,10 +156,13 @@ jobs:
             yarn install
             echo "Building project"
             yarn build
+            echo "Setting environment variables"
+            export MONGODB_URL=${{ secrets.MONGODB_URL }}
+            export PORT=${{ secrets.PORT }}
             echo "Restarting PM2 processes"
             if pm2 describe all | grep -q 'status\s*online'; then
-              pm2 restart all
+              pm2 restart all --update-env
             else
-              pm2 start build/server.js --name "my-app" -f
+              pm2 start build/src/server.js --name "my-app" --update-env
             fi
             echo "Deployment completed at $(date)"
