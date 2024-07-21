@@ -36,18 +36,33 @@ esbuild
     },
   })
   .then(() => {
-    execSync("npx tsoa spec && npx tsoa routes", { stdio: "inherit" });
-    console.log("Swagger spec and routes generated successfully.");
+    try {
+      execSync("npx tsoa spec && npx tsoa routes", { stdio: "inherit" });
+      console.log("Swagger spec and routes generated successfully.");
+    } catch (error) {
+      console.error("Error generating tsoa spec and routes:", error);
+      process.exit(1);
+    }
 
     fs.copySync(
       path.resolve(__dirname, "src/docs/swagger.json"),
       path.resolve(__dirname, "build/docs/swagger.json")
     );
-    fs.copySync(
-      path.resolve(__dirname, "src/configs/.env.production"),
-      path.resolve(__dirname, "build/configs/.env.production")
-    );
-    console.log("Swagger JSON and .env.production copied successfully!");
+
+    const envPath = path.resolve(__dirname, "src/configs/.env.production");
+    if (fs.existsSync(envPath)) {
+      fs.copySync(
+        envPath,
+        path.resolve(__dirname, "build/configs/.env.production")
+      );
+      console.log(".env.production copied successfully!");
+    } else {
+      console.warn(
+        ".env.production not found. Ensure it exists or is properly set up in your CI/CD environment."
+      );
+    }
+
+    console.log("Build completed successfully!");
   })
   .catch((error) => {
     console.error("Build failed:", error);
