@@ -1,8 +1,8 @@
 const esbuild = require("esbuild");
-const path = require("path");
+const { execSync } = require("child_process");
 const fs = require("fs-extra");
+const path = require("path");
 const copy = require("esbuild-plugin-copy").default;
-//
 
 esbuild
   .build({
@@ -36,6 +36,9 @@ esbuild
     },
   })
   .then(() => {
+    execSync("npx tsoa spec && npx tsoa routes", { stdio: "inherit" });
+    console.log("Swagger spec and routes generated successfully.");
+
     fs.copySync(
       path.resolve(__dirname, "src/docs/swagger.json"),
       path.resolve(__dirname, "build/docs/swagger.json")

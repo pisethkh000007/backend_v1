@@ -6,7 +6,7 @@ import { connectDB } from "./database";
 
 // Determine the environment and set the appropriate .env file
 const env = process.env.NODE_ENV || "development";
-const envPath = path.resolve(`__dirname, ../configs/.env.${env}`);
+const envPath = path.resolve(__dirname, `../configs/.env.${env}`);
 dotenv.config({ path: envPath });
 
 // Log the environment variables to verify they are loaded
