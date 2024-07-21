@@ -19,9 +19,6 @@ jobs:
           node-version: "20.x"
 
       - name: Set environment variables
-        env:
-          MONGODB_URL: ${{ secrets.MONGODB_URL }}
-          PORT: ${{ secrets.PORT }}
         run: |
           echo "MONGODB_URL=${{ secrets.MONGODB_URL }}" >> $GITHUB_ENV
           echo "PORT=${{ secrets.PORT }}" >> $GITHUB_ENV
@@ -46,7 +43,7 @@ jobs:
 
       - name: Transfer .env.production to EC2
         run: |
-          scp -i ~/.ssh/id_rsa src/configs/.env.production ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/Project-backend-NodeJS/src/configs/.env.production
+          scp -i ~/.ssh/id_rsa <(echo "MONGODB_URL=${{ secrets.MONGODB_URL }}\nPORT=${{ secrets.PORT }}") ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/Project-backend-NodeJS/src/configs/.env.production
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
@@ -63,6 +60,9 @@ jobs:
             yarn install
             echo "Building project"
             yarn build
+            echo "Setting environment variables"
+            export MONGODB_URL=$(cat src/configs/.env.production | grep MONGODB_URL | cut -d '=' -f2)
+            export PORT=$(cat src/configs/.env.production | grep PORT | cut -d '=' -f2)
             echo "Restarting PM2 processes"
             if pm2 describe all | grep -q 'status\s*online'; then
               pm2 restart all --update-env
