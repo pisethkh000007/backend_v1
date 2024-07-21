@@ -41,9 +41,13 @@ jobs:
           ssh-add ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Transfer .env.production to EC2
+      - name: Generate .env.production file
         run: |
-          scp -i ~/.ssh/id_rsa <(echo "MONGODB_URL=${{ secrets.MONGODB_URL }}\nPORT=${{ secrets.PORT }}") ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/Project-backend-NodeJS/src/configs/.env.production
+          echo "MONGODB_URL=${{ secrets.MONGODB_URL }}" > .env.production
+          echo "PORT=${{ secrets.PORT }}" >> .env.production
+
+      - name: Transfer .env.production to EC2
+        run: scp -i ~/.ssh/id_rsa .env.production ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/Project-backend-NodeJS/src/configs/.env.production
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
