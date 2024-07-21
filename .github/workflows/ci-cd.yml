@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 30 # Increased timeout value
 
     steps:
       - name: Checkout code
@@ -20,6 +20,9 @@ jobs:
           node-version: "20.x"
 
       - name: Set environment variables
+        env:
+          MONGODB_URL: ${{ secrets.MONGODB_URL }}
+          PORT: ${{ secrets.PORT }}
         run: |
           echo "MONGODB_URL=${{ secrets.MONGODB_URL }}" >> $GITHUB_ENV
           echo "PORT=${{ secrets.PORT }}" >> $GITHUB_ENV
@@ -40,7 +43,21 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           eval $(ssh-agent -s)
           ssh-add ~/.ssh/id_rsa
+          if [ $? -ne 0 ]; then
+            echo "Error adding SSH key"
+            exit 1
+          fi
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+          if [ $? -ne 0 ]; then
+            echo "Error adding known host"
+            exit 1
+          fi
+          ssh-add -l
+          if [ $? -ne 0 ]; then
+            echo "Error listing SSH keys"
+            exit 1
+          fi
+          echo "SSH setup completed successfully"
 
       - name: Generate .env.production file
         run: |
@@ -49,6 +66,10 @@ jobs:
 
       - name: Transfer .env.production to EC2
         run: scp -i ~/.ssh/id_rsa .env.production ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/Project-backend-NodeJS/src/configs/.env.production
+
+      - name: Test SSH Connection
+        run: |
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} 'echo "SSH connection successful"'
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
@@ -66,8 +87,8 @@ jobs:
             echo "Building project"
             yarn build
             echo "Setting environment variables"
-            export MONGODB_URL=$(cat src/configs/.env.production | grep MONGODB_URL | cut -d '=' -f2)
-            export PORT=$(cat src/configs/.env.production | grep PORT | cut -d '=' -f2)
+            export MONGODB_URL=${{ secrets.MONGODB_URL }}
+            export PORT=${{ secrets.PORT }}
             echo "Restarting PM2 processes"
             if pm2 describe all | grep -q 'status\s*online'; then
               pm2 restart all --update-env
@@ -75,4 +96,3 @@ jobs:
               pm2 start build/src/server.js --name "my-app" --update-env
             fi
             echo "Deployment completed at $(date)"
-        timeout-minutes: 30
