@@ -11,3 +11,6 @@ build/
 
 # Ignore node_modules directory
 node_modules/
+
+# Ignore ecosystem.config.js
+ecosystem.config.js
