@@ -1,6 +1,7 @@
 # Ignore environment configuration files
 src/configs/.env.development
 src/configs/.env.production
+src/configs/.env.test
 
 # Ignore Yarn lock file
 yarn.lock
