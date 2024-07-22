@@ -32,8 +32,11 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Install Jest
-        run: yarn add jest
+      - name: Install Jest and ts-jest
+        run: yarn add jest ts-jest @types/jest
+
+      - name: Configure Jest
+        run: npx ts-jest config:init
 
       - name: Run tests
         run: yarn test
