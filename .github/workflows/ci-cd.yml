@@ -86,15 +86,6 @@ jobs:
             yarn install
             echo "Building project"
             yarn build
-            echo "Setting environment variables"
-            export $(grep -v '^#' src/configs/.env.production | xargs)
-            echo "Validated environment variables:"
-            echo "MONGODB_URL=${MONGODB_URL}"
-            echo "PORT=${PORT}"
             echo "Restarting PM2 processes"
-            if pm2 describe my-app > /dev/null; then
-              pm2 startOrRestart ecosystem.config.js --env production
-            else
-              pm2 start build/server.js --name "my-app"
-            fi
+            pm2 startOrRestart ecosystem.config.js --env production
             echo "Deployment completed at $(date)"
