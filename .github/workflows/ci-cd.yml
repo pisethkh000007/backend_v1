@@ -32,8 +32,13 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Install Jest and ts-jest
-        run: yarn add jest ts-jest @types/jest
+      - name: Install Jest, ts-jest, and supertest
+        run: yarn add jest ts-jest @types/jest supertest
+
+      - name: Generate .env.test file
+        run: |
+          echo "MONGODB_URL=test_mongodb_url" > src/configs/.env.test
+          echo "PORT=4000" >> src/configs/.env.test
 
       - name: Run tests
         run: yarn test
