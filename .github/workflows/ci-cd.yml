@@ -53,6 +53,9 @@ jobs:
       - name: Transfer .env.production to EC2
         run: scp -i ~/.ssh/id_rsa .env.production ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/Project-backend-NodeJS/src/configs/.env.production
 
+      - name: Verify .env.production file on EC2
+        run: ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} 'cat /home/ubuntu/Project-backend-NodeJS/src/configs/.env.production'
+
       - name: Test SSH Connection
         run: ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} 'echo "SSH connection successful"'
 
@@ -72,7 +75,10 @@ jobs:
             echo "Building project"
             yarn build
             echo "Setting environment variables"
-            export $(cat src/configs/.env.production | xargs)
+            export $(grep -v '^#' src/configs/.env.production | xargs)
+            echo "Validated environment variables:"
+            echo "MONGODB_URL=${MONGODB_URL}"
+            echo "PORT=${PORT}"
             echo "Restarting PM2 processes"
             if pm2 describe my-app > /dev/null; then
               pm2 restart my-app --update-env
