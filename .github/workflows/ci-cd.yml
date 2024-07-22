@@ -72,8 +72,7 @@ jobs:
             echo "Building project"
             yarn build
             echo "Setting environment variables"
-            export MONGODB_URL=${{ secrets.MONGODB_URL }}
-            export PORT=${{ secrets.PORT }}
+            export $(cat src/configs/.env.production | xargs)
             echo "Restarting PM2 processes"
             if pm2 describe my-app > /dev/null; then
               pm2 restart my-app --update-env
