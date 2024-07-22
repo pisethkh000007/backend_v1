@@ -16,6 +16,12 @@ console.log("Loaded environment variables:", {
   MONGODB_URL: process.env.MONGODB_URL,
 });
 
+// Verify that the necessary environment variables are loaded
+if (!process.env.MONGODB_URL || !process.env.PORT) {
+  console.error("Missing necessary environment variables.");
+  process.exit(1);
+}
+
 connectDB();
 
 function run() {

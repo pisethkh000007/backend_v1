@@ -58,11 +58,12 @@ jobs:
 
       - name: Generate .env.production file
         run: |
-          echo "MONGODB_URL=${{ secrets.MONGODB_URL }}" > .env.production
-          echo "PORT=${{ secrets.PORT }}" >> .env.production
+          mkdir -p src/configs
+          echo "MONGODB_URL=${{ secrets.MONGODB_URL }}" > src/configs/.env.production
+          echo "PORT=${{ secrets.PORT }}" >> src/configs/.env.production
 
       - name: Transfer .env.production to EC2
-        run: scp -i ~/.ssh/id_rsa .env.production ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/Project-backend-NodeJS/src/configs/.env.production
+        run: scp -i ~/.ssh/id_rsa src/configs/.env.production ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/Project-backend-NodeJS/src/configs/.env.production
 
       - name: Verify .env.production file on EC2
         run: ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} 'cat /home/ubuntu/Project-backend-NodeJS/src/configs/.env.production'
@@ -85,6 +86,15 @@ jobs:
             yarn install
             echo "Building project"
             yarn build
+            echo "Setting environment variables"
+            export $(grep -v '^#' src/configs/.env.production | xargs)
+            echo "Validated environment variables:"
+            echo "MONGODB_URL=${MONGODB_URL}"
+            echo "PORT=${PORT}"
             echo "Restarting PM2 processes"
-            pm2 startOrRestart ecosystem.config.js --env production
+            if pm2 describe my-app > /dev/null; then
+              pm2 startOrRestart ecosystem.config.js --env production
+            else
+              pm2 start build/server.js --name "my-app"
+            fi
             echo "Deployment completed at $(date)"
