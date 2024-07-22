@@ -23,17 +23,18 @@ jobs:
         env:
           MONGODB_URL: ${{ secrets.MONGODB_URL }}
           PORT: ${{ secrets.PORT }}
-          NODE_ENV: production
         run: |
           echo "MONGODB_URL=${{ secrets.MONGODB_URL }}" >> $GITHUB_ENV
           echo "PORT=${{ secrets.PORT }}" >> $GITHUB_ENV
-          echo "NODE_ENV=production" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: yarn install
 
       - name: Install Jest, ts-jest, and supertest
         run: yarn add jest ts-jest @types/jest supertest
+
+      - name: Create configs directory
+        run: mkdir -p src/configs
 
       - name: Generate .env.test file
         run: |
@@ -59,7 +60,6 @@ jobs:
         run: |
           echo "MONGODB_URL=${{ secrets.MONGODB_URL }}" > .env.production
           echo "PORT=${{ secrets.PORT }}" >> .env.production
-          echo "NODE_ENV=production" >> .env.production
 
       - name: Transfer .env.production to EC2
         run: scp -i ~/.ssh/id_rsa .env.production ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/Project-backend-NodeJS/src/configs/.env.production
