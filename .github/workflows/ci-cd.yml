@@ -23,9 +23,11 @@ jobs:
         env:
           MONGODB_URL: ${{ secrets.MONGODB_URL }}
           PORT: ${{ secrets.PORT }}
+          NODE_ENV: production
         run: |
           echo "MONGODB_URL=${{ secrets.MONGODB_URL }}" >> $GITHUB_ENV
           echo "PORT=${{ secrets.PORT }}" >> $GITHUB_ENV
+          echo "NODE_ENV=production" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: yarn install
@@ -49,6 +51,7 @@ jobs:
         run: |
           echo "MONGODB_URL=${{ secrets.MONGODB_URL }}" > .env.production
           echo "PORT=${{ secrets.PORT }}" >> .env.production
+          echo "NODE_ENV=production" >> .env.production
 
       - name: Transfer .env.production to EC2
         run: scp -i ~/.ssh/id_rsa .env.production ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/Project-backend-NodeJS/src/configs/.env.production
@@ -81,8 +84,8 @@ jobs:
             echo "PORT=${PORT}"
             echo "Restarting PM2 processes"
             if pm2 describe my-app > /dev/null; then
-              pm2 restart my-app --update-env
+              pm2 restart my-app --update-env --env production
             else
-              pm2 start build/server.js --name "my-app" --update-env
+              pm2 start build/server.js --name "my-app" --update-env --env production
             fi
             echo "Deployment completed at $(date)"
