@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: "my-app",
-      script: "server.js", // Adjust this path if necessary
+      script: "build/server.js", // Adjust this path if necessary
       env_production: {
         NODE_ENV: "production",
         PORT: 3000,
