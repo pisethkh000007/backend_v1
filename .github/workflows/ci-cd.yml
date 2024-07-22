@@ -32,6 +32,9 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Install Jest
+        run: yarn add jest
+
       - name: Run tests
         run: yarn test
 
