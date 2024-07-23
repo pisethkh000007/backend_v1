@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30 # Increased timeout value
+    timeout-minutes: 30
 
     steps:
       - name: Checkout code
@@ -20,9 +20,6 @@ jobs:
           node-version: "20.x"
 
       - name: Set environment variables
-        env:
-          MONGODB_URL: ${{ secrets.MONGODB_URL }}
-          PORT: ${{ secrets.PORT }}
         run: |
           echo "MONGODB_URL=${{ secrets.MONGODB_URL }}" >> $GITHUB_ENV
           echo "PORT=${{ secrets.PORT }}" >> $GITHUB_ENV
@@ -86,6 +83,8 @@ jobs:
             yarn install
             echo "Building project"
             yarn build
+            echo "Setting environment variables"
+            export $(cat /home/ubuntu/Project-backend-NodeJS/src/configs/.env.production | xargs)
             echo "Restarting PM2 processes"
             pm2 startOrRestart ecosystem.config.js --env production
             echo "Deployment completed at $(date)"
