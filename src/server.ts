@@ -16,9 +16,13 @@ console.log("Loaded environment variables:", {
   MONGODB_URL: process.env.MONGODB_URL,
 });
 
-// Verify that the necessary environment variables are loaded
-if (!process.env.MONGODB_URL || !process.env.PORT) {
-  console.error("Missing necessary environment variables.");
+// Ensure all necessary environment variables are defined
+if (!process.env.MONGODB_URL) {
+  console.error("MONGODB_URL is a required field");
+  process.exit(1);
+}
+if (!process.env.PORT) {
+  console.error("PORT is a required field");
   process.exit(1);
 }
 
@@ -31,4 +35,3 @@ function run() {
 }
 
 run();
-//

@@ -1,11 +1,3 @@
-const dotenv = require("dotenv");
-const path = require("path");
-
-// Determine the environment and set the appropriate .env file
-const env = process.env.NODE_ENV || "production";
-const envPath = path.resolve(__dirname, `src/configs/.env.${env}`);
-dotenv.config({ path: envPath });
-
 module.exports = {
   apps: [
     {
@@ -13,8 +5,8 @@ module.exports = {
       script: "build/server.js",
       env: {
         NODE_ENV: "development",
-        PORT: process.env.PORT,
-        MONGODB_URL: process.env.MONGODB_URL,
+        PORT: 3000,
+        MONGODB_URL: "mongodb+srv://virakson444:12345@bootcamp-project.lwadf47.mongodb.net/auths",
       },
       env_production: {
         NODE_ENV: "production",
