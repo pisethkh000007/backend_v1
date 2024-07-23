@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import path from "path";
 
-// Determine the environment and set the appropriate .env file
+// Load environment variables
 const env = process.env.NODE_ENV || "development";
 const envPath = path.resolve(__dirname, `../configs/.env.${env}`);
 dotenv.config({ path: envPath });
@@ -13,10 +13,6 @@ console.log("Loaded environment variables:", {
   MONGODB_URL: process.env.MONGODB_URL,
 });
 
-import app from "./app";
-import configs from "./utils/config";
-import { connectDB } from "./database";
-
 // Ensure all necessary environment variables are defined
 if (!process.env.MONGODB_URL) {
   console.error("MONGODB_URL is a required field");
@@ -26,6 +22,10 @@ if (!process.env.PORT) {
   console.error("PORT is a required field");
   process.exit(1);
 }
+
+import app from "./app";
+import configs from "./utils/config";
+import { connectDB } from "./database";
 
 connectDB();
 
