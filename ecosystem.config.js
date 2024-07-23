@@ -13,8 +13,7 @@ module.exports = {
       env: {
         NODE_ENV: "development",
         PORT: 3000,
-        MONGODB_URL:
-          "mongodb+srv://virakson444:12345@bootcamp-project.lwadf47.mongodb.net/auths",
+        MONGODB_URL: "mongodb+srv://virakson444:12345@bootcamp-project.lwadf47.mongodb.net/auths",
       },
       env_production: {
         NODE_ENV: "production",
