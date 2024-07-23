@@ -1,3 +1,10 @@
+const path = require("path");
+const dotenv = require("dotenv");
+
+// Load environment variables from .env.production file
+const envPath = path.resolve(__dirname, "src/configs/.env.production");
+dotenv.config({ path: envPath });
+
 module.exports = {
   apps: [
     {
