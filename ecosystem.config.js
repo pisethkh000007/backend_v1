@@ -1,7 +1,8 @@
 const dotenv = require("dotenv");
 const path = require("path");
 
-const env = process.env.NODE_ENV || "development";
+// Determine the environment and set the appropriate .env file
+const env = process.env.NODE_ENV || "production";
 const envPath = path.resolve(__dirname, `src/configs/.env.${env}`);
 dotenv.config({ path: envPath });
 
