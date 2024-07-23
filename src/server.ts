@@ -1,8 +1,5 @@
 import dotenv from "dotenv";
 import path from "path";
-import app from "./app";
-import configs from "./utils/config";
-import { connectDB } from "./database";
 
 // Determine the environment and set the appropriate .env file
 const env = process.env.NODE_ENV || "development";
@@ -15,6 +12,10 @@ console.log("Loaded environment variables:", {
   PORT: process.env.PORT,
   MONGODB_URL: process.env.MONGODB_URL,
 });
+
+import app from "./app";
+import configs from "./utils/config";
+import { connectDB } from "./database";
 
 // Ensure all necessary environment variables are defined
 if (!process.env.MONGODB_URL) {
