@@ -15,7 +15,7 @@
 
 process.env.PORT = "3000";
 process.env.MONGODB_URL =
-  "mongodb+srv://virakson444:NfT5ug3pATwLxQxQ@bootcamp-project.lwadf47.mongodb.net/auths";
+  "mongodb+srv://pisethsann50:2oeRnCALccYC1ssM@bootcamp-project.h4sdiy1.mongodb.net/auths";
 
 console.log("MONGODB_URL:", process.env.MONGODB_URL);
 console.log("NODE_ENV:", process.env.NODE_ENV);
