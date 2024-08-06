@@ -3,11 +3,10 @@ import swaggerUi from "swagger-ui-express";
 import { RegisterRoutes } from "../src/routes/v1/routes";
 import fs from "fs";
 import path from "path";
-import { errorHandler } from "../src/middlewares/errorHandler";
 
 // Dynamically load swagger.json
 const swaggerDocument = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "docs/swagger.json"), "utf8")
+  fs.readFileSync(path.join(__dirname, "./docs/swagger.json"), "utf8")
 );
 
 // ========================
@@ -33,6 +32,9 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // ========================
 // ERROR Handler
 // ========================
+app.use((err: any, _req: express.Request, res: express.Response) => {
+  console.error(err.stack);
+  res.status(500).send({ error: "Something went wrong!" });
+});
 
 export default app;
-app.use(errorHandler);
